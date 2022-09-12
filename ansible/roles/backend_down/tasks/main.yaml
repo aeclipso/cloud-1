@@ -1,0 +1,8 @@
+---
+- name: compose down
+  shell: |
+    cd /home/ophuong/inseption/ && \
+    make stop -i && \
+    make clean -i && \
+    make cleanfiles -i && \
+    rm -rf /home/ophuong/inseption/

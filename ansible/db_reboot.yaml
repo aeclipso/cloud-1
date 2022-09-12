@@ -1,0 +1,6 @@
+---
+- hosts: database
+  become: true
+  roles:
+    - db_down
+    - db_up

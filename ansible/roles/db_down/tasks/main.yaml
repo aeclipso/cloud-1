@@ -1,0 +1,15 @@
+---
+- name: Stop a container
+  community.docker.docker_container:
+    name: mydb
+    state: stopped
+
+- name: Remove container
+  community.docker.docker_container:
+    name: mydb
+    state: absent
+
+- name: Remove image
+  community.docker.docker_image:
+    state: absent
+    name: mariadbcloud

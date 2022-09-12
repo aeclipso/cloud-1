@@ -1,0 +1,12 @@
+---
+- name: Install soft for loadbalancer
+  apt:
+    name: "{{packages}}"
+    update_cache: yes
+  vars:
+    packages:
+      - lsb-release
+      - apt-transport-https
+      - nginx-full
+  notify:
+    - nginx systemd

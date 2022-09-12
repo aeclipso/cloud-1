@@ -1,0 +1,8 @@
+---
+- hosts: database
+  become: true
+  roles:
+    - db_down
+    - db_rm
+    - db_up
+    - db_init

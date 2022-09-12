@@ -1,0 +1,63 @@
+version: '3.8'
+###############################################################################
+volumes:
+  wp:
+    driver: local
+    name: wp
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ophuong/data/wp
+###############################################################################
+networks:
+  services_network:
+    driver: bridge
+    ipam: 
+      config: 
+      - subnet: 172.25.0.0/24
+        gateway: 172.25.0.1
+###############################################################################
+services:
+  nginx:
+    restart: always
+    env_file: .env
+    build: 
+        context: ./requirements/nginx
+        args: 
+          - SITE_URL=${SITE_URL}
+          - SITE_ADMIN_MAIL=${SITE_ADMIN_MAIL}
+    container_name: nginx
+    ports: 
+      - '80:80'
+    volumes:
+      - wp:/var/www/html/wordpress:ro
+    networks: 
+      services_network:
+        ipv4_address: 172.25.0.2
+    depends_on:
+      - wordpress
+  wordpress:
+    restart: always
+    build: ./requirements/wordpress
+    container_name: wordpress
+    env_file: .env
+    volumes:
+      - wp:/var/www/html/wordpress
+    networks: 
+      services_network:
+        ipv4_address: 172.25.0.3
+  phpmyadmin:
+    restart: always
+    build: ./requirements/phpmyadmin
+    container_name: phpmyadmin
+    networks: 
+      services_network:
+        ipv4_address: 172.25.0.4
+    env_file: .env
+    environment:
+      - PMA_HOST=10.128.0.13
+      - PMA_PORT=3306
+      - PMA_ARBITRARY=1
+      - PMA_ABSOLUTE_URI=https://pma.answers42.ru
+    ports:
+      - '8080:80' 

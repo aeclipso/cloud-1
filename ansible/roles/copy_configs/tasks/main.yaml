@@ -1,0 +1,39 @@
+---
+- name: clone configs loadbalancer
+  copy: 
+    src: /home/ophuong/cloud-1/loadbalancer/configs/backend.conf 
+    dest: /etc/nginx/sites-available 
+    mode: 0640
+
+- name: clone password file pma configs loadbalancer
+  copy: 
+    src: /home/ophuong/cloud-1/loadbalancer/configs/.htpasswd 
+    dest: /etc/nginx/
+    mode: 0640
+
+- name: clone configs loadbalancer
+  copy: 
+    src: /home/ophuong/cloud-1/loadbalancer/certs/answers42.crt
+    dest: /etc/ssl
+    owner: root
+    mode: 0640
+
+- name: clone configs loadbalancer
+  copy: 
+    src: /home/ophuong/cloud-1/loadbalancer/certs/answers42.key
+    dest: /etc/ssl
+    owner: root
+    mode: 0640
+
+- name: Create a symbolic link
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/backend.conf
+    dest: /etc/nginx/sites-enabled/backend.conf
+    owner: root
+    group: root
+    state: link
+
+- name: Reboot nginx
+  service: 
+    name: nginx
+    state: restarted

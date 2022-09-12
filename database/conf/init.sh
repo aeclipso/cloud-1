@@ -1,0 +1,5 @@
+#!/bin/bash
+echo -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB;\n \
+      CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASS';\n \
+      GRANT ALL PRIVILEGES ON $MYSQL_DB.* TO '$MYSQL_USER'@'%';\n \
+      FLUSH PRIVILEGES;\n" > /conf/init.sql

@@ -1,0 +1,23 @@
+---
+backend:
+  hosts:
+    backend1:
+      ansible_host: backend1
+    backend2:
+      ansible_host: backend2
+
+loadbalancer:
+  hosts:
+    lb:
+      ansible_host: loadbalancer
+
+database:
+  hosts:
+    db:
+      ansible_host: database
+
+all:
+  children:
+    backend:
+    loadbalancer:
+    database:

@@ -1,0 +1,34 @@
+---
+- name: clone docker proj database
+  copy: 
+    src: /home/ophuong/cloud-1/database/
+    dest: /home/ophuong/db/
+    mode: 0640
+
+- name: build docker db
+  community.docker.docker_image:
+    name: mariadbcloud:v1
+    build:
+      path: /home/ophuong/db
+    source: build
+
+- name: Create a volume with options
+  community.docker.docker_volume:
+    name: db
+    driver_options:
+      type: local
+      device: /home/ophuong/data/db
+
+
+- name: docker run with database
+  community.docker.docker_container:
+    name: mydb
+    state: started
+    image: mariadbcloud:v1
+    restart: true
+    restart_policy: always
+    ports:
+      - "3306:3306"
+    env_file: /home/ophuong/db/.env
+    volumes:
+      - /home/ophuong/data/db:/var/lib/mysql

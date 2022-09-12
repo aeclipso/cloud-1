@@ -1,0 +1,10 @@
+---
+- name: clone configs backend
+  copy: 
+    src: /home/ophuong/cloud-1/backend/
+    dest: /home/ophuong/backend/
+    mode: 0640
+
+- name: compose up
+  shell: |
+    cd /home/ophuong/backend/ && make rund

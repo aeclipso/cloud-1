@@ -1,0 +1,44 @@
+---
+- name: give +x  into script
+  community.docker.docker_container_exec:
+    container: mydb
+    argv:
+      - chmod
+      - "+x"
+      - "/conf/init.sh"
+    chdir: /
+  register: result
+
+- name: exec init script
+  community.docker.docker_container_exec:
+    container: mydb
+    argv:
+      - sh
+      - "-c"
+      - "/conf/init.sh"
+    chdir: /
+  register: result
+
+- name: sleep 10
+  shell: |
+    sleep 10
+
+- name: init db
+  community.docker.docker_container_exec:
+    container: mydb
+    argv:
+      - bash
+      - "-c"
+      - "mysql -uroot -p2 < /conf/init.sql"
+    chdir: /
+  register: result
+
+- name: restore db
+  community.docker.docker_container_exec:
+    container: mydb
+    argv:
+      - bash
+      - "-c"
+      - "mysql -uroot -p2 wordpress < /conf/dump_db.sql"
+    chdir: /
+  register: result

@@ -1,0 +1,22 @@
+---
+- name: Remove a volume
+  community.docker.docker_volume:
+    name: db
+    state: absent
+
+
+- name: Delete content & directory
+  file:
+    state: absent
+    path: /home/ophuong/data
+
+- name: Delete content & directory
+  file:
+    state: absent
+    path: /home/ophuong/db
+
+- name: Remove image
+  community.docker.docker_image:
+    state: absent
+    name: mariadbcloud
+    tag: v1

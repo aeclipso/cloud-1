@@ -1,0 +1,62 @@
+---
+- name: Add the user 'ophuong' to docker
+  ansible.builtin.user:
+    name: ophuong
+    shell: /bin/bash
+    groups: docker
+    append: yes
+
+- name: Install soft for backend
+  apt:
+    name: "{{packages}}"
+    update_cache: yes
+  vars:
+    packages:
+      - lsb-release
+      - apt-transport-https
+      - gnupg
+      - build-essential
+      - make
+
+# - name: Install compose
+#   shell: curl -SL https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+# - name: add executable
+#   shell: sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+- name: install compose plugin
+  shell: |
+    DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker} && echo $DOCKER_CONFIG
+- name: mkdir
+  shell: |
+    mkdir -p $DOCKER_CONFIG/cli-plugins
+- name: curl docker-compose
+  shell: |
+    curl -SL https://github.com/docker/compose/releases/download/v2.10.2/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+- name: execute
+  shell: |
+    chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+- name: link
+  shell: |
+    ln -s $DOCKER_CONFIG/cli-plugins/docker-compose /usr/bin/docker-compose
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/debian/ bullseye stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: "{{docker}}"
+    update_cache: yes
+    state: latest
+  vars:
+    docker:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+  notify: 
+    - docker start
